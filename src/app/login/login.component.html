@@ -1,0 +1,44 @@
+<div class="login-box" style="background-color: white;">
+    <div class="login-logo">
+        <img height="100px;" width="400px;" src="../../assets/dist/img/trans_logo_2.png">
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+        <div class="card-body login-card-body">
+            <h5 class="login-box-msg">Đăng nhập để bắt đầu làm việc</h5>
+
+            <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+                <div *ngIf="invalidLogin" class="alert alert-danger">Sai tên đăng nhập hoặc mật khẩu.</div>
+                <br />
+                <div class="form-group has-feedback">
+                    <label>Tên đăng nhập</label>
+                    <input type="text" name="name" class="form-control" placeholder="Tên đăng nhập" ngModel
+                        required="required">
+                </div>
+                <div class="form-group has-feedback">
+                    <label>Mật khẩu</label>
+                    <input type="password" name="password" class="form-control" placeholder="Mật khẩu" ngModel
+                        required="required">
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat" [disabled]="!loginForm.valid">
+                            Đăng nhập
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="social-auth-links text-center mb-3">
+                <p>- Hoặc -</p>
+                <a href="#" class="btn btn-block btn-primary">
+                    <i class="fa fa-facebook mr-2"></i> Đăng nhập bằng Facebook
+                </a>
+                <a href="#" class="btn btn-block btn-danger">
+                    <i class="fa fa-google-plus mr-2"></i> Đăng nhập bằng Google+
+                </a>
+            </div>
+        </div>
+        <!-- /.login-card-body -->
+    </div>
+</div>

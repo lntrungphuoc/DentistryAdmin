@@ -1,0 +1,187 @@
+<div class="row">
+    <div class="card-header col-12 margin-auto">
+        <h3 style="margin-left: 15px;" class="card-title">Lịch hẹn chưa xác nhận</h3>
+    </div>
+</div>
+
+<div class="container-fluid pt-3">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="not-confirmed-appointment-table" class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Phòng khám</th>
+                        <th>Ngày hẹn</th>
+                        <th>Giờ hẹn</th>
+                        <th>Nội dung</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let appointment of appointmentSchedules; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>{{appointment.name}}</td>
+                        <td>{{appointment.phoneNumber}}</td>
+                        <td>{{appointment.clinic.address}}</td>
+                        <td>{{appointment.date | date: "dd/MM/yyyy"}}</td>
+                        <td>{{appointment.time | date: "hh:mm a"}}</td>
+                        <td>
+                            <div [innerHTML]="appointment.content"></div>
+                        </td>
+                        <td>
+                            <button style="background-color: transparent;" class="btn text-primary p-1" title="Sửa"
+                                data-toggle="modal" data-target="#update" (click)="getUpdateInfo(i)"><i
+                                    class="fa fa-edit"></i></button>
+                            <button style="background-color: transparent;" class="btn text-danger p-1" title="Xóa"
+                                data-toggle="modal" data-target="#del" (click)="getIdDelete(i)"><i
+                                    class="fa fa-trash"></i></button>
+                            <button style="background-color: transparent;" class="btn text-primary p-1"
+                                title="Xác nhận cuộc hẹn" data-toggle="modal" data-target="#confirm"
+                                (click)="getConfirmId(i)"><i class="fa fa-check-circle"></i></button>
+                            <!-- Chinh sua -->
+                            <div class="modal fade out-standing" id="update" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Chỉnh sửa</h5>
+                                            <button type="button" #closeEditButton class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form ngNativeValidate class="appoinment-form" (ngSubmit)="onUpdate()">
+                                                <div class="form-group">
+                                                    <select name="clinic" class="form-control"
+                                                        id="exampleFormControlSelect1"
+                                                        [(ngModel)]="appointmentScheduleUpdate.idClinic"
+                                                        required="required">
+                                                        <option *ngFor="let clinic of clinics"
+                                                            [attr.selected]="clinic.id === appointmentScheduleUpdate.idClinic ? true : null"
+                                                            value="{{clinic.id}}">
+                                                            {{clinic.address}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tên khách hàng <span class="text-danger">*</span></label>
+                                                    <input name="name" id="name"
+                                                        [(ngModel)]="appointmentScheduleUpdate.name" type="text"
+                                                        class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Số điện thoại <span class="text-danger">*</span></label>
+                                                    <input name="phoneNumber" id="phoneNumber"
+                                                        [(ngModel)]="appointmentScheduleUpdate.phoneNumber" type="text"
+                                                        class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ngày hẹn <span class="text-danger">*</span></label>
+                                                    <input name="date" id="date" type="date"
+                                                        [ngModel]="appointmentScheduleUpdate.date | date: 'yyyy-MM-dd'"
+                                                        (ngModelChange)="appointmentScheduleUpdate.date=$event"
+                                                        class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Giờ hẹn <span class="text-danger">*</span></label>
+                                                    <input name="time" id="time" type="time" [ngModel]="time"
+                                                        (ngModelChange)="appointmentScheduleUpdate.time=$event"
+                                                        class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group-2 mb-4">
+                                                    <label>Nội dung <span class="text-danger">*</span></label>
+                                                    <!-- <div [innerHTML]="appointmentScheduleUpdate.content"></div> -->
+                                                    <textarea name="content" id="content"
+                                                        [(ngModel)]="appointmentScheduleUpdate.content"
+                                                        class="form-control" rows="3"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary" type="button"
+                                                        data-dismiss="modal">Hủy</button>
+                                                    <button class="btn btn-primary" type="submit">Lưu</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Delete-->
+                            <div class="modal fade" id="del" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Xác nhận</h5>
+                                            <button type="button" #closeDeleteButton class="close" data-dismiss="modal"
+                                                aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Bạn có chắc muốn xóa lịch hẹn này không?
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" type="button"
+                                                    data-dismiss="modal">Hủy</button>
+                                                <a style="color: white;" class="btn btn-danger"
+                                                    (click)="onDelete()">Xóa</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- end Delete-->
+                            <!-- Confirm appointment -->
+                            <div class="modal fade" id="confirm" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Cảnh báo</h5>
+                                            <button type="button" #closeConfirmButton class="close" data-dismiss="modal"
+                                                aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Bạn có chắc muốn xác nhận lịch hẹn này không?
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" type="button"
+                                                    data-dismiss="modal">Hủy</button>
+                                                <a style="color: white;" class="btn btn-primary"
+                                                    (click)="confirmAppointment(i)">Xác nhận</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Confirm appointment -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<button id="openModalButton" [hidden]="true" data-toggle="modal" data-target="#dataNotice"></button>
+
+<!--Notice-->
+<div class="modal fade out-standing" id="dataNotice" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p class="errorMess">{{responseMessage}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="reloadPage()" class="btn btn-primary" type="button" data-dismiss="modal">Đã hiểu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end Notice-->

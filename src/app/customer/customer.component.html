@@ -1,0 +1,192 @@
+<div class="row">
+    <div class="card-header col-6 margin-auto">
+        <h3 style="margin-left: 15px;" class="card-title">Quản lý khách hàng</h3>
+    </div>
+    <div class="card-header col-6 text-right">
+        <button style="margin-right: 25px;" class="btn text-primary p-1"
+            style="background-color: white;" data-toggle="modal" data-target="#addItem"><i
+                class="fa fa-plus-circle"></i> Thêm</button>
+    </div>
+</div>
+
+<div class="container-fluid pt-3">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="customer-table" class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Họ tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <!-- <th>CCCD/CMND</th> -->
+                        <th>BHYT</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let customer of customers; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>{{customer.customerName}}</td>
+                        <td>{{customer.phoneNumber}}</td>
+                        <td>{{customer.address}}</td>
+                        <!-- <td>{{customer.cccd}}</td> -->
+                        <td>{{customer.bhyt}}</td>
+                        <td>{{customer.createdDate| date: "dd/MM/yyyy, hh:mm a"}}</td>
+                        <td>
+                            <button style="background-color: transparent;" class="btn text-primary p-1" title="Sửa" data-toggle="modal" data-target="#update" (click)="getUpdateInfo(i)"><i class="fa fa-edit"></i></button>
+                            <!-- <button style="background-color: transparent;" class="btn text-danger p-1" title="Xóa" data-toggle="modal" data-target="#del" (click)="getIdDelete(i)"><i class="fa fa-trash"></i></button> -->
+                            <!-- Chinh sua -->
+                            <div class="modal fade out-standing" id="update" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Chỉnh sửa</h5>
+                                            <button type="button" #closeEditButton class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                                <form ngNativeValidate class="appoinment-form" (ngSubmit)="onUpdate()" >
+                                                    <div class="form-group">
+                                                        <label>Tên khách hàng <span class="text-danger">*</span></label>
+                                                        <input name="name" id="name" [(ngModel)]="customerUpdate.customerName" type="text" class="form-control" required="required">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Số điện thoại <span class="text-danger">*</span></label>
+                                                        <input name="phoneNumber" id="phoneNumber" [(ngModel)]="customerUpdate.phoneNumber" type="text" class="form-control" required="required">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Địa chỉ</label>
+                                                        <input name="address" id="address" type="text" [(ngModel)]="customerUpdate.address" class="form-control">
+                                                    </div>
+                                                    <!-- <div class="form-group">
+                                                        <label>CCCD/CMND <span class="text-danger">*</span></label>
+                                                        <input name="cccd" id="cccd" type="text" [(ngModel)]="customerUpdate.cccd" class="form-control" required="required">
+                                                    </div> -->
+                                                    <div class="form-group-2 mb-4">
+                                                        <label>BHYT <span class="text-danger">*</span></label>
+                                                        <input name="bhyt" id="bhyt" type="text" [(ngModel)]="customerUpdate.bhyt" class="form-control" required="required">
+                                                    </div>
+                                                    <div class="form-group-2 mb-4">
+                                                        <label>Mật khẩu <span class="text-danger">*</span></label>
+                                                        <input name="password" id="password" type="password" [(ngModel)]="password" class="form-control" required="required">
+                                                    </div>
+                                                    <div class="form-group-2 mb-4">
+                                                        <label>Nhập lại mật khẩu <span class="text-danger">*</span></label>
+                                                        <input name="confirmPassword" id="confirmPassword" type="password" class="form-control" [(ngModel)]="confirmPassword" required="required">
+                                                    </div>
+                                                    <p *ngIf="!checkConfirmPassword()" style="color: red;">
+                                                       Mật khẩu chưa trùng 
+                                                    </p>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                                                        <button class="btn btn-primary" type="submit" >Lưu</button>
+                                                    </div>
+                                                </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Delete-->
+                            <div class="modal fade" id="del" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Cảnh báo</h5>
+                                            <button type="button" #closeDeleteButton class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Bạn có chắc muốn xóa khách hàng này không?
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                                                <a asp-action="Delete" style="color: white;" class="btn btn-danger" (click)="onDelete()">Xóa</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- end Delete-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--Add-->
+<div class="modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thêm mới</h5>
+                <button type="button" #closeAddButton class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form #addCustomer="ngForm" ngNativeValidate (ngSubmit)="onSubmit(addCustomer)">
+                    <div class="form-group">
+                        <label>Tên khách hàng <span class="text-danger">*</span></label>
+                        <input name="name" id="name" type="text" class="form-control" ngModel required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại <span class="text-danger">*</span></label>
+                        <input name="phoneNumber" id="phoneNumber" type="text" class="form-control" ngModel required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ</label>
+                        <input name="address" id="address" type="text" class="form-control" ngModel>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label>CCCD/CMND <span class="text-danger">*</span></label>
+                        <input name="cccd" id="cccd" type="text" class="form-control" ngModel required="required">
+                    </div> -->
+                    <div class="form-group-2 mb-4">
+                        <label>BHYT <span class="text-danger">*</span></label>
+                        <input name="bhyt" id="bhyt" type="text" class="form-control" ngModel required="required">
+                    </div>
+                    <!-- <div class="form-group-2 mb-4">
+                        <label>Mật khẩu <span class="text-danger">*</span></label>
+                        <input name="password" id="password" type="password" class="form-control" [(ngModel)]="password" required="required">
+                    </div>
+                    <div class="form-group-2 mb-4">
+                        <label>Nhập lại mật khẩu <span class="text-danger">*</span></label>
+                        <input name="confirmPassword" id="confirmPassword" type="password" class="form-control" [(ngModel)]="confirmPassword" required="required">
+                    </div>
+                    <p *ngIf="!checkConfirmPassword()" style="color: red;">
+                       Mật khẩu chưa trùng 
+                    </p> -->
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-primary" type="submit" name="submit" value="create">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> <!--End Add-->
+<button id="openModalButton" [hidden]="true" data-toggle="modal" data-target="#dataNotice"></button>
+<!--Notice-->
+<div class="modal fade out-standing" id="dataNotice" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p class="errorMess">{{responseMessage}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="reloadPage()" class="btn btn-primary" type="button" data-dismiss="modal">Đã hiểu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end Notice-->

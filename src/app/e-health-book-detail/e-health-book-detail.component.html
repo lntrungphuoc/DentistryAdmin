@@ -1,0 +1,270 @@
+<div class="row">
+    <div class="card-header col-6 margin-auto">
+        <h3 style="margin-left: 15px;" class="card-title">Chi tiết sổ sức khỏe</h3>
+    </div>
+    <div class="card-header col-6 text-right">
+        <button style="margin-right: 25px;" class="btn text-primary p-1" style="background-color: white;"
+            data-toggle="modal" data-target="#addItem"><i class="fa fa-plus-circle"></i> Thêm</button>
+    </div>
+</div>
+<div class="container-fluid pt-3">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="health-book-detail-table"
+                class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Dịch vụ</th>
+                        <th>Bác sĩ</th>
+                        <th>Chẩn đoán</th>
+                        <th>Thuốc</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let detail of eHealthBookDetail; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>
+                            <div *ngFor="let service of detail.eHealthBookDetailServices">
+                                <p>{{service.service.name}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngFor="let doctor of detail.eHealthBookDetailDoctor">
+                                <p>{{doctor.doctor.name}}</p>
+                            </div>
+                        </td>
+                        <td>{{detail.diagnose}}</td>
+                        <td>{{detail.medicine}}</td>
+                        <td>{{detail.createdDate | date: 'dd-MM-yyyy hh:mm a'}}</td>
+                        <td>
+                            <button style="background-color: transparent;" class="btn text-primary p-1" title="Sửa"
+                                data-toggle="modal" data-target="#update" (click)="getUpdateInfo(i)"><i
+                                    class="fa fa-edit"></i></button>
+                            <button style="background-color: transparent;" class="btn text-danger p-1" title="Xóa"
+                                data-toggle="modal" data-target="#del" (click)="getIdDelete(i)"><i
+                                    class="fa fa-trash"></i></button>
+                            <button style="background-color: transparent;" class="btn text-primary p-1"
+                                title="Tải đính kèm" data-toggle="modal" data-target="#down"
+                                (click)="getListAttachment(i)"><i class="fa fa-download"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chinh sua -->
+<div class="modal fade out-standing" id="update" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Chỉnh sửa</h5>
+                <button type="button" #closeEditButton class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form #updateForm="ngForm" ngNativeValidate class="appoinment-form" (ngSubmit)="onUpdate(updateForm)">
+                    <div class="form-group">
+                        <label>Chẩn đoán <span class="text-danger">*</span></label>
+                        <input name="diagnose" id="diagnose" [(ngModel)]="eHealthBookUpdate.diagnose" type="text"
+                            class="form-control" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Thuốc <span class="text-danger">*</span></label>
+                        <input name="medicine" id="medicine" [(ngModel)]="eHealthBookUpdate.medicine" type="text"
+                            class="form-control" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Chọn bác sĩ <span class="text-danger">*</span></label>
+                        <ng-multiselect-dropdown name="doctor" [settings]="dropdownSettings" [data]="doctors"
+                            [(ngModel)]="this.selectedDoctor">
+
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="form-group">
+                        <label>Chọn dịch vụ <span class="text-danger">*</span></label>
+                        <ng-multiselect-dropdown name="service" [settings]="dropdownSettings" [data]="services"
+                            [(ngModel)]="this.selectedService">
+
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="form-group">
+                        <label>Đính kèm tài liệu</label>
+                        <input name="attachment" id="attachment" type="file" class="form-control"
+                            (change)="handleFileInput($event.target.files)" multiple ngModel>
+                        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Tên tài liệu</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let a of listAttachmentDownload; index as iAttachment">
+                                <tr>
+                                    <td>{{a.fileName}}</td>
+                                    <td>
+                                        <button style="background-color: transparent;" class="btn text-primary p-1"
+                                            title="Tải" (click)="removeAttachment(iAttachment)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-primary" type="submit">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--End chinh sua-->
+
+<!--Delete-->
+<div class="modal fade" id="del" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Cảnh báo</h5>
+                <button type="button" #closeDeleteButton class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn xóa chi tiết sổ sức khỏe này không?
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                    <a asp-action="Delete" style="color: white;" class="btn btn-danger" (click)="onDelete()">Xóa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end Delete-->
+
+<!-- Download attachment -->
+<div class="modal fade" id="down" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Tải tài liệu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tên tài liệu</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let a of listAttachmentDownload">
+                            <td>{{a.fileName}}</td>
+                            <td>
+                                <button style="background-color: transparent;" class="btn text-primary p-1" title="Xem"
+                                    (click)="viewAttachment(a.url)">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <button style="background-color: transparent;" class="btn text-primary p-1" title="Tải"
+                                    (click)="downloadAttachment(a.url, a.fileName)">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Download attachment -->
+
+<!--Add-->
+<div class="modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thêm mới</h5>
+                <button type="button" #closeAddButton class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form ngNativeValidate enctype="multipart/form-data" #eBookDetail="ngForm"
+                    (ngSubmit)="onCreate(eBookDetail)">
+                    <div class="form-group">
+                        <label>Chọn dịch vụ <span class="text-danger">*</span></label>
+                        <ng-multiselect-dropdown name="service" [settings]="dropdownSettings" [data]="services" ngModel>
+
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="form-group">
+                        <label>Chọn bác sĩ <span class="text-danger">*</span></label>
+                        <ng-multiselect-dropdown name="doctor" [settings]="dropdownSettings" [data]="doctors" ngModel>
+
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="form-group">
+                        <label>Chẩn đoán <span class="text-danger">*</span></label>
+                        <input name="diagnose" id="diagnose" type="text" class="form-control" ngModel
+                            required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Thuốc <span class="text-danger">*</span></label>
+                        <input name="medicine" id="medicine" type="text" class="form-control" ngModel
+                            required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Đính kèm tài liệu</label>
+                        <input name="attachment" id="attachment" type="file" class="form-control"
+                            (change)="handleFileInput($event.target.files)" multiple ngModel>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-primary" type="submit">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> <!--End Add-->
+
+<button id="openModalButton" [hidden]="true" data-toggle="modal" data-target="#dataNotice"></button>
+<!--Notice-->
+<div class="modal fade" id="dataNotice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{responseMessage}}
+                <div class="modal-footer">
+                    <button (click)="reloadPage()" class="btn btn-primary" type="button" data-dismiss="modal">Đã hiểu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

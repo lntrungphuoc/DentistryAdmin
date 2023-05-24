@@ -1,0 +1,77 @@
+<!-- Brand Logo -->
+<a routerLink="" class="brand-link">
+  <img src="assets/dist/img/trans_logo_2.png" alt="AdminLTE Logo" class="brand-image " style="opacity: .8">
+  <span class="brand-text font-weight-light" style="color: #343a40;">.</span>
+</a>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <!-- Sidebar user panel (optional) -->
+  <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+    <div *ngIf="isUserAuthenticated()">
+      <div class="flex-wrapper">
+        <div class="image">
+          <img src="assets/dist/img/profile_img.jpg" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <span style="color: white;display: inline-block; vertical-align: middle;" href="#" class="d-block">Hello
+            {{fullName}}</span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!isUserAuthenticated()">
+      <a style="padding-left: 20px;" class="ion-log-in" [routerLink]="[]" (click)="onClick(urlDangNhap)"> Đăng
+        nhập</a>
+    </div>
+  </div>
+
+
+  <!-- Sidebar Menu -->
+  <nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+      <li class="nav-item has-treeview">
+        <a class="nav-link" [routerLink]="[]" (click)="onClick(urlLichHen)">
+          <i class="nav-icon fa fa-calendar"></i>
+          <p>
+            Lịch hẹn
+            <i class="right fa fa-angle-left"></i>
+          </p>
+        </a>
+        <ul style="margin-left: 20px;" class="nav nav-treeview">
+          <li class="nav-item" [routerLink]="[]" (click)="onClick(urlDaXacNhan)">
+            <a class="nav-link">
+              <i class="fa fa-check nav-icon"></i>
+              <p>Đã xác nhận</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="[]" (click)="onClick(urlChuaXacNhan)">
+              <i class="fa fa-times nav-icon"></i>
+              <p>Chưa xác nhận</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item has-treeview">
+        <a class="nav-link" [routerLink]="[]" (click)="onClick(urlKhachHang)">
+          <i class="nav-icon fa fa-user"></i>
+          <p>
+            Khách hàng
+          </p>
+        </a>
+      </li>
+      <li class="nav-item has-treeview">
+        <a class="nav-link" [routerLink]="[]" (click)="onClick(urlSoSucKhoe)">
+          <i class="nav-icon fa fa-address-book"></i>
+          <p>
+            Sổ sức khỏe
+          </p>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.sidebar-menu -->
+</div>
+<!-- /.sidebar -->
