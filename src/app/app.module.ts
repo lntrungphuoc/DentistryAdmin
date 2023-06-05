@@ -22,6 +22,7 @@ import { NotConfirmedAppointmentComponent } from './not-confirmed-appointment/no
 import { ErrorCatchingInterceptorService } from './services/error-catching-interceptor.service';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { HomeComponent } from './home/home.component';
+import { UserComponent } from './user/user.component';
 
 const appRoutes: Routes = [
   { path: 'lich-hen', component: AppointmentScheduleComponent, canActivate: [AuthGuard] },
@@ -31,6 +32,7 @@ const appRoutes: Routes = [
   { path: 'da-xac-nhan', component: ConfirmedAppointmentComponent, canActivate: [AuthGuard] },
   { path: 'chua-xac-nhan', component: NotConfirmedAppointmentComponent, canActivate: [AuthGuard] },
   { path: 'dang-nhap', component: LoginComponent },
+  { path: 'user', component: UserComponent, canActivate: [AuthGuard]},
   { path: '', component: HomeComponent }
 ]
 
@@ -50,7 +52,8 @@ export function tokenGetter() {
     LoginComponent,
     ConfirmedAppointmentComponent,
     NotConfirmedAppointmentComponent,
-    HomeComponent
+    HomeComponent,
+    UserComponent
   ],
   imports: [
     NgMultiSelectDropDownModule.forRoot(),

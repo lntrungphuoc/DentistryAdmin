@@ -17,6 +17,7 @@ export class LeftSidebarComponent implements OnInit {
   urlDangNhap: string = "dang-nhap";
   urlDaXacNhan: string = "da-xac-nhan";
   urlChuaXacNhan: string = "chua-xac-nhan";
+  urlUser: string = "user";
   fullName: string;
   user: User;
 
