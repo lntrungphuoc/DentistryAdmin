@@ -14,6 +14,8 @@ import { EHealthBookService } from '../entities/eHealthBookService';
 import { Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { DataTableDirective } from 'angular-datatables';
+import { DoctorService } from '../services/doctorService';
+import { Doctor } from '../entities/doctor';
 
 @Component({
   selector: 'app-e-health-book',
@@ -30,6 +32,7 @@ export class EHealthBookComponent implements OnInit {
   customers: Customer[];
   services: Service[];
   selectedServices: Service[];
+  doctors: Doctor[];
   currentSelectedServices: Service[] = [];
   fee;
   updateFee;
@@ -60,7 +63,8 @@ export class EHealthBookComponent implements OnInit {
     private clinicService: ClinicService,
     private customerService: CustomerService,
     private serviceService: ServiceService,
-    private eHealthBookServiceService: EHealthBookServiceService) { }
+    private eHealthBookServiceService: EHealthBookServiceService,
+    private doctorService: DoctorService) { }
 
   ngOnInit(): void {
     this.eHealthBookService.getAll().subscribe((res) => {
@@ -81,6 +85,9 @@ export class EHealthBookComponent implements OnInit {
       },
       (error) => console.log(error)
     );
+    this.doctorService.getAll().subscribe((res) => {
+      this.doctors = res;
+    })
     this.selectedServices = [];
   }
 
@@ -105,6 +112,7 @@ export class EHealthBookComponent implements OnInit {
     this.eHealthBookUpdate.idClinic = this.eHealthBooks[i].idClinic;
     this.eHealthBookUpdate.idCustomer = this.eHealthBooks[i].idCustomer;
     this.eHealthBookUpdate.totalFee = this.eHealthBooks[i].totalFee;
+    this.eHealthBookUpdate.idDoctorInCharge = this.eHealthBooks[i].idDoctorInCharge;
     this.eHealthBookUpdate.checkUpDate = this.eHealthBooks[i].checkUpDate;
     this.eHealthBookUpdate.reExaminationDate = this.eHealthBooks[i].reExaminationDate;
     this.eHealthBookUpdate.note = this.eHealthBooks[i].note;
@@ -152,6 +160,7 @@ export class EHealthBookComponent implements OnInit {
     this.eHealthBook.idCustomer = data.customer;
     this.eHealthBook.totalFee = data.totalFee;
     this.eHealthBook.checkUpDate = data.date;
+    this.eHealthBook.idDoctorInCharge = data.doctor;
     let listService: Service[] = data.service;
     this.eHealthBook.totalFee = this.fee;
     if (data.reExaminationDate == '') {
@@ -165,6 +174,7 @@ export class EHealthBookComponent implements OnInit {
     this.eHealthBook.reExaminationDate = data.reExaminationDate;
     this.eHealthBook.note = data.note;
     let newEHealthBook;
+    // console.log(data)
 
     await this.eHealthBookService.createPromise(this.eHealthBook).then((res) => {
       newEHealthBook = res.data[0];

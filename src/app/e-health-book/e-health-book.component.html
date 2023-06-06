@@ -21,6 +21,7 @@
                         <th>Dịch vụ</th>
                         <th>Tổng chi phí</th>
                         <th>Ngày khám</th>
+                        <th>BS phụ trách</th>
                         <th>Ngày tái khám</th>
                         <th>Ghi chú</th>
                         <th>Thao tác</th>
@@ -38,6 +39,7 @@
                         </td>
                         <td>{{eHealthBook.totalFee}}</td>
                         <td>{{eHealthBook.checkUpDate | date: "dd-MM-yyyy hh:mm a"}}</td>
+                        <td>{{eHealthBook.doctor != null ? eHealthBook.doctor.name : ""}}</td>
                         <td>{{eHealthBook.reExaminationDate | date: "dd-MM-yyyy hh:mm a"}}</td>
                         <td>{{eHealthBook.note}}</td>
                         <td>
@@ -101,6 +103,17 @@
                                                     <label>Tổng phí <span class="text-danger">*</span></label>
                                                     <input name="totalFee" id="totalFee" [(ngModel)]="updateFee"
                                                         type="text" class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Bác sĩ phụ trách</label>
+                                                    <select class="form-control" name="doctor" 
+                                                            [(ngModel)]="eHealthBookUpdate.idDoctorInCharge" ngModel>
+                                                        <option *ngFor="let doctor of doctors"
+                                                            [attr.selected]="doctor.id === eHealthBookUpdate.idDoctorInCharge ? true : null"
+                                                            value="{{doctor.id}}">
+                                                            {{doctor.name}}
+                                                        </option>
+                                                    </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày tái khám</label>
@@ -335,6 +348,14 @@
                         <label>Tổng phí <span class="text-danger">*</span></label>
                         <input name="totalFee" id="totalFee" type="text" class="form-control" [(ngModel)]="fee"
                             required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Bác sĩ phụ trách</label>
+                        <select class="form-control" name="doctor" ngModel>
+                            <option *ngFor="let doctor of doctors" value="{{doctor.id}}">
+                                {{doctor.name}}
+                            </option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Ngày tái khám</label>
