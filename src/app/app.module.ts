@@ -11,6 +11,8 @@ import { AppointmentSchedule } from './entities/appointmentSchedule';
 import { AppointmentScheduleComponent } from './appointment-schedule/appointment-schedule.component';
 import { EHealthBookComponent } from './e-health-book/e-health-book.component';
 import { EHealthBookDetailComponent } from './e-health-book-detail/e-health-book-detail.component';
+// import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { CKEditorModule } from 'ng2-ckeditor';
 
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { CustomerComponent } from './customer/customer.component';
@@ -23,6 +25,7 @@ import { ErrorCatchingInterceptorService } from './services/error-catching-inter
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
+import { OurServiceComponent } from './our-service/our-service.component';
 
 const appRoutes: Routes = [
   { path: 'lich-hen', component: AppointmentScheduleComponent, canActivate: [AuthGuard] },
@@ -33,6 +36,7 @@ const appRoutes: Routes = [
   { path: 'chua-xac-nhan', component: NotConfirmedAppointmentComponent, canActivate: [AuthGuard] },
   { path: 'dang-nhap', component: LoginComponent },
   { path: 'user', component: UserComponent, canActivate: [AuthGuard]},
+  { path: 'service', component: OurServiceComponent, canActivate: [AuthGuard]},
   { path: '', component: HomeComponent }
 ]
 
@@ -53,7 +57,8 @@ export function tokenGetter() {
     ConfirmedAppointmentComponent,
     NotConfirmedAppointmentComponent,
     HomeComponent,
-    UserComponent
+    UserComponent,
+    OurServiceComponent
   ],
   imports: [
     NgMultiSelectDropDownModule.forRoot(),
@@ -61,7 +66,8 @@ export function tokenGetter() {
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot(appRoutes),
-    DataTablesModule
+    DataTablesModule,
+    CKEditorModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },

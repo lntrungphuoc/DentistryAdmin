@@ -1,0 +1,177 @@
+<div class="row">
+    <div class="card-header col-6 margin-auto">
+        <h3 style="margin-left: 15px;" class="card-title">Quản lý dịch vụ</h3>
+    </div>
+    <div class="card-header col-6 text-right">
+        <button style="margin-right: 25px;" class="btn text-primary p-1" style="background-color: white;"
+            data-toggle="modal" data-target="#addItem"><i class="fa fa-plus-circle"></i> Thêm</button>
+    </div>
+</div>
+
+<div class="container-fluid pt-3">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="service-table"
+                class="table table-bordered table-hover dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Chi phí</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let service of listService; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>{{service.name}}</td>
+                        <td>{{service.fee}}</td>
+                        <td>
+                            <button style="background-color: transparent;" class="btn text-primary p-1" title="Sửa"
+                                data-toggle="modal" data-target="#update" (click)="getUpdateInfo(i)"><i
+                                    class="fa fa-edit"></i></button>
+                            <button style="background-color: transparent;" class="btn text-danger p-1" title="Xóa"
+                                data-toggle="modal" data-target="#del" (click)="getIdDelete(i)"><i
+                                    class="fa fa-trash"></i></button>
+
+                            <!-- Chinh sua -->
+                            <div class="modal fade out-standing" id="update" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Chỉnh sửa</h5>
+                                            <button type="button" #closeEditButton class="close" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form ngNativeValidate class="appoinment-form" (ngSubmit)="onUpdate()">
+                                                <div class="form-group">
+                                                    <label>Tên dịch vụ <span class="text-danger">*</span></label>
+                                                    <input name="name" id="name"
+                                                        [(ngModel)]="serviceUpdate.name" type="text"
+                                                        class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group-2 mb-4">
+                                                    <label>Thông tin <span class="text-danger">*</span></label>
+                                                    <ckeditor name="information" [config]="ckeConfig" data="{{serviceUpdate.information}}" [(ngModel)]="serviceUpdate.information"></ckeditor>
+                                                    <!-- <textarea name="information" id="information"
+                                                        [(ngModel)]="serviceUpdate.information"
+                                                        class="form-control" rows="3" required="required"></textarea> -->
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Chi phí <span class="text-danger">*</span></label>
+                                                    <input name="fee" id="fee"
+                                                        [(ngModel)]="serviceUpdate.fee" type="number"
+                                                        class="form-control" required="required">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>URL </label>
+                                                    <input name="url" id="url"
+                                                        [(ngModel)]="serviceUpdate.url" type="text"
+                                                        class="form-control">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary" type="button"
+                                                        data-dismiss="modal">Hủy</button>
+                                                    <button class="btn btn-primary" type="submit">Lưu</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Delete-->
+                            <div class="modal fade" id="del" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Xác nhận</h5>
+                                            <button type="button" #closeDeleteButton class="close" data-dismiss="modal"
+                                                aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Bạn có chắc muốn xóa dịch vụ này không?
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" type="button"
+                                                    data-dismiss="modal">Hủy</button>
+                                                <a style="color: white;" class="btn btn-danger"
+                                                    (click)="onDelete()">Xóa</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- end Delete-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--Add-->
+<div class="modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thêm mới</h5>
+                <button type="button" #closeAddButton class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form ngNativeValidate #appointmentForm="ngForm" (ngSubmit)="onSubmit(appointmentForm)">
+                    <div class="form-group">
+                        <label>Tên dịch vụ <span class="text-danger">*</span></label>
+                        <input name="name" id="name" type="text" class="form-control" ngModel required="required">
+                    </div>
+                    <div class="form-group-2 mb-4">
+                        <label>Thông tin <span class="text-danger">*</span></label>
+                        <ckeditor name="information" [config]="ckeConfig" ngModel></ckeditor>
+                    </div>
+                    <div class="form-group">
+                        <label>Chi phí <span class="text-danger">*</span></label>
+                        <input name="fee" id="fee" type="number" class="form-control" ngModel
+                            required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input name="url" id="url" type="text" class="form-control" ngModel>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-primary" type="submit" name="submit" value="create">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> <!--End Add-->
+<button id="openModalButton" [hidden]="true" data-toggle="modal" data-target="#dataNotice"></button>
+<!--Notice-->
+<div class="modal fade out-standing" id="dataNotice" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p class="errorMess">{{responseMessage}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="reloadPage()" class="btn btn-primary" type="button" data-dismiss="modal">Đã hiểu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end Notice-->

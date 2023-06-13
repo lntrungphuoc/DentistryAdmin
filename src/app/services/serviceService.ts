@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Service } from "../entities/service";
+import { ResponseData } from "../entities/responseData";
 
 @Injectable({
     providedIn: 'root',
@@ -18,16 +19,16 @@ export class ServiceService {
         return this.http.get<Service>("https://localhost:7011/service/" + url);
     }
 
-    create(service: Service) {
-        return this.http.post("https://localhost:7011/service/create", service);
+    create(service: Service): Observable<ResponseData> {
+        return this.http.post<ResponseData>("https://localhost:7011/service/create", service);
     }
 
-    update(service: Service) {
-        return this.http.put("https://localhost:7011/service/update", service);
+    update(service: Service): Observable<ResponseData> {
+        return this.http.put<ResponseData>("https://localhost:7011/service/update", service);
     }
 
-    delete(id: number) {
-        return this.http.delete("https://localhost:7011/service/delete?id=" + id);
+    delete(id: number): Observable<ResponseData> {
+        return this.http.delete<ResponseData>("https://localhost:7011/service/delete?id=" + id);
     }
 
     calculateFee(services: Service[]) {
